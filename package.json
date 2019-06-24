@@ -1,0 +1,21 @@
+{
+    "name": "text-breaker",
+    "version": "1.0.0",
+    "description": "Break texts into N characters per line.",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha tests/"
+    },
+    "keywords": [
+        "string",
+        "text",
+        "break",
+        "test"
+    ],
+    "author": "Augusto Russo",
+    "license": "MIT",
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "mocha": "^6.1.4"
+    }
+}
