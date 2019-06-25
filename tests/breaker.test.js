@@ -1,7 +1,7 @@
 const { expect, assert } = require(`chai`);
 const textSamples = require(`./utils/texts`);
 const breaker = require(`../src/breaker`);
-const { WordLengthGreaterThanLimit } = require("../src/exceptions");
+const { WordLengthGreaterThanLimit, LowLimiter } = require("../src/exceptions");
 
 describe(`Text breaker`, () => {
     describe(`Not expecting text justification`, () => {
@@ -12,7 +12,7 @@ describe(`Text breaker`, () => {
         });
 
         it(`receives a text and break it into lines respecting the limiter`, () => {
-            texts.forEach(sample => {
+            texts.forEach((sample, index) => {
                 if (sample.raise) {
                     assert.throws(
                         breaker(sample.raw, sample.limiter),
@@ -24,11 +24,11 @@ describe(`Text breaker`, () => {
 
                     // Asserts if all lines respect the limiter
                     result.split(`\n`).forEach(line => {
-                        assert(line.length <= sample.limiter, `Characters per line`);
+                        assert(line.length <= sample.limiter, `[SAMPLE ${index}] Invalid characters per line`);
                     });
 
                     // Asserts if the result match the expected one
-                    assert(result === sample.expected, `Texts match`);
+                    assert(result === sample.expected, `[SAMPLE ${index}] Texts does not match`);
                 }
             });
         });
@@ -42,41 +42,47 @@ describe(`Text breaker`, () => {
         });
 
         it(`receives a text, break it into lines and apply text justification to the result`, () => {
-            texts.forEach(sample => {
+            texts.forEach((sample, index) => {
                 if (sample.raise) {
                     expect(() => breaker(sample.raw, sample.limiter, true))
                         .to.throw(WordLengthGreaterThanLimit);
                 } else {
                     const result = breaker(sample.raw, sample.limiter, true);
 
-                    // console.log(result);
-                    // console.log(sample.expected);
-
                     // Asserts if all lines respect the limiter
                     result.split(`\n`).forEach(line => {
                         if (line.length && line.includes(` `)) {
-                            assert(line.length === sample.limiter, `Characters per line`);
+                            assert(line.length === sample.limiter, `[SAMPLE ${index}] Invalid characters per line`);
                         }
                     });
 
                     // Asserts if the result match the expected one
-                    assert(result == sample.expected, `Texts match`);
+                    assert(result == sample.expected, `[SAMPLE ${index}] Texts does not match`);
                 }
             });
         });
     });
 
-    describe(`When word length is greater than limiter`, () => {
-        let texts = [];
+    describe(`Throws an exception`, () => {
+        let wordGreater = [];
+        let lowLimiter = [];
 
         before(function () {
-            texts = textSamples.filter(t => t.raise);
+            wordGreater = textSamples.filter(t => t.raise == `WordLengthGreaterThanLimit`);
+            lowLimiter = textSamples.filter(t => t.raise == `LowLimiter`);
         });
 
-        it(`throws an exception`, () => {
-            texts.forEach(sample => {
+        it(`when word length is greater than limiter`, () => {
+            wordGreater.forEach(sample => {
                 expect(() => breaker(sample.raw, sample.limiter, true))
-                    .to.throw(WordLengthGreaterThanLimit);
+                    .to.throw(WordLengthGreaterThanLimit, sample.expected);
+            });
+        });
+
+        it(`when limiter is too low, below 1.`, () => {
+            lowLimiter.forEach(sample => {
+                expect(() => breaker(sample.raw, sample.limiter, true))
+                    .to.throw(LowLimiter, sample.expected);
             });
         });
     });

@@ -2,7 +2,7 @@
  * Breaker function
  */
 
-const { WordLengthGreaterThanLimit } = require("./exceptions");
+const { WordLengthGreaterThanLimit, LowLimiter } = require("./exceptions");
 const justify = require("./justify");
 
 /**
@@ -46,13 +46,20 @@ function _processParagraph(paragraph, maxCharPerLine, shouldJustify) {
 
         if (tmp.length === maxCharPerLine) {
             // Start another fresh line
-            output.push(shouldJustify ? justify(tmp, maxCharPerLine) : tmp);
+            const processedLine = _verifyForStrip(tmp);
+            output.push(shouldJustify ? justify(processedLine, maxCharPerLine) : processedLine);
             currentLine = ``;
         } else if (tmp.length > maxCharPerLine) {
-            // Start another line with the word
-            const processedLine = _verifyForStrip(currentLine);
-            output.push(shouldJustify ? justify(processedLine, maxCharPerLine) : processedLine);
-            currentLine = `${word} `;
+            if (currentLine.length) {
+                // Start another line with the word
+                const processedLine = _verifyForStrip(currentLine);
+                output.push(shouldJustify ? justify(processedLine, maxCharPerLine) : processedLine);
+                currentLine = `${word} `;
+            } else {
+                // If nothing is present on currentLine use tmp
+                const processedLine = _verifyForStrip(tmp);
+                output.push(shouldJustify ? justify(processedLine, maxCharPerLine) : processedLine);
+            }
         } else {
             // Just put the word on the current line
             currentLine += `${word} `;
@@ -84,6 +91,12 @@ function breakLines(text, maxCharPerLine, shouldJustify = false) {
     // Prepare the text to be justified, when necessary
     if (shouldJustify) {
         text = text.replace(/ +/g, ` `);
+    }
+
+    if (maxCharPerLine < 1) {
+        throw new LowLimiter(
+            `Maximum characters per line must be 1 or greater`
+        );
     }
 
     const output = [];

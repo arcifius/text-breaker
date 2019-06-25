@@ -23,7 +23,7 @@ from the darkness. God called the light
 "day," and the darkness he called
 "night." And there was evening, and
 there was morning - the first day.`,
-        raise: false,
+        raise: null,
         limiter: 40,
         justified: false
     },
@@ -38,7 +38,7 @@ and the earth. Now the earth was
 formless and empty, darkness was over
 the surface of the deep, and the Spirit
 of God was hovering over the waters.`,
-        raise: false,
+        raise: null,
         limiter: 40,
         justified: false
     },
@@ -69,8 +69,20 @@ n
 g
 l
 e`,
-        raise: false,
-        limiter: 40,
+        raise: null,
+        limiter: 1,
+        justified: false
+    },
+    {
+        raw: `a b c d e`,
+        expected: `\
+a
+b
+c
+d
+e`,
+        raise: null,
+        limiter: 1,
         justified: false
     },
     {
@@ -99,7 +111,7 @@ from  the darkness. God called the light
 "night."  And  there  was  evening,  and
 there  was  morning  -  the  first  day.\
 `,
-        raise: false,
+        raise: null,
         limiter: 40,
         justified: true
     },
@@ -114,7 +126,7 @@ diami            Aliquam           erat            volutpat.
 diami            Aliquam           erat            volutpat.
 diami            Aliquam           erat            volutpat.
 diami            Aliquam           erat            volutpat.`,
-        raise: false,
+        raise: null,
         limiter: 60,
         justified: true
     },
@@ -124,8 +136,8 @@ diami Aliquam erat volutpat.
 diami Aliquam erat volutpat.
 diami Aliquam erat volutpat.
 diami Aliquam erat volutpat.`,
-        expected: null,
-        raise: true,
+        expected: `The word "Aliquam" can't respect your maximum limit of characters per line!`,
+        raise: `WordLengthGreaterThanLimit`,
         limiter: 5,
         justified: true
     },
@@ -167,7 +179,7 @@ tortor  eu eros. Aliquam felis ipsum, porta id vulputate
 et,  tincidunt non justo. Cras posuere sem a mi laoreet,
 ac ullamcorper diam ultrices. Aliquam accumsan et ligula
 in                                            fringilla.`,
-        raise: false,
+        raise: null,
         limiter: 56,
         justified: true
     },
@@ -195,8 +207,32 @@ posuere  sem a  mi  laoreet,  ac
 ullamcorper    diam    ultrices.
 Aliquam  accumsan et  ligula  in
 fringilla.`,
-        raise: false,
+        raise: null,
         limiter: 32,
+        justified: true
+    },
+    {
+        raw: `a b c d e`,
+        expected: `\
+a
+b
+c
+d
+e`,
+        raise: null,
+        limiter: 1,
+        justified: true
+    },
+    {
+        raw: `aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaaaa`,
+        expected: `\
+aaaaaaaaaa
+aaaaaaaaaa
+aaaaaaaaaa
+aaaaaaaaaa
+aaaaaaaaaa`,
+        raise: null,
+        limiter: 10,
         justified: true
     },
     {
@@ -230,8 +266,37 @@ n
 g
 l
 e`,
-        raise: false,
-        limiter: 5,
+        raise: null,
+        limiter: 1,
         justified: true
     },
+    {
+        raw: `\
+b 
+r 
+e 
+a 
+k `,
+        expected: `\
+b
+
+r
+
+e
+
+a
+
+k
+`,
+        raise: null,
+        limiter: 1,
+        justified: true
+    },
+    {
+        raw: `aaa aaa aaaa`,
+        expected: `Maximum characters per line must be 1 or greater`,
+        raise: `LowLimiter`,
+        limiter: 0,
+        justified: false,
+    }
 ];
