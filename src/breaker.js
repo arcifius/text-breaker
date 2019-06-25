@@ -3,6 +3,7 @@
  */
 
 const { WordLengthGreaterThanLimit } = require("./exceptions");
+const justify = require("./justify");
 
 /**
  * Strips last character of provided string
@@ -26,9 +27,10 @@ function _verifyForStrip(line) {
  * 
  * @param {String} paragraph any text block
  * @param {Number} maxCharPerLine the maximum of characters allowed in a line
+ * @param {Boolean} shouldJustify determines if the result should be justified.
  * @returns {String} resulting paragraph/text
  */
-function _processParagraph(paragraph, maxCharPerLine) {
+function _processParagraph(paragraph, maxCharPerLine, shouldJustify) {
     const output = [];
     let currentLine = ``;
 
@@ -44,11 +46,12 @@ function _processParagraph(paragraph, maxCharPerLine) {
 
         if (tmp.length === maxCharPerLine) {
             // Start another fresh line
-            output.push(tmp);
+            output.push(shouldJustify ? justify(tmp, maxCharPerLine) : tmp);
             currentLine = ``;
         } else if (tmp.length > maxCharPerLine) {
             // Start another line with the word
-            output.push(_verifyForStrip(currentLine));
+            const processedLine = _verifyForStrip(currentLine);
+            output.push(shouldJustify ? justify(processedLine, maxCharPerLine) : processedLine);
             currentLine = `${word} `;
         } else {
             // Just put the word on the current line
@@ -57,7 +60,13 @@ function _processParagraph(paragraph, maxCharPerLine) {
     });
 
     if (currentLine.length) {
-        output.push(_verifyForStrip(currentLine));
+        let processedLine = _verifyForStrip(currentLine);
+
+        if (processedLine !== `` && shouldJustify) {
+            processedLine = justify(processedLine, maxCharPerLine);
+        }
+
+        output.push(processedLine);
     }
 
     return output.join(`\n`);
@@ -68,14 +77,15 @@ function _processParagraph(paragraph, maxCharPerLine) {
  * 
  * @param {String} text any text, paragraphs are considered through `\n`
  * @param {Number} maxCharPerLine the maximum of characters allowed in a line
+ * @param {Boolean} shouldJustify determines if the result should be justified.
  * @returns {String} resulting text
  */
-function breakLines(text, maxCharPerLine = 40) {
+function breakLines(text, maxCharPerLine, shouldJustify = false) {
     const output = [];
     const paragraphs = text.split(`\n`);
 
     paragraphs.forEach(paragraph => {
-        output.push(_processParagraph(paragraph, maxCharPerLine));
+        output.push(_processParagraph(paragraph, maxCharPerLine, shouldJustify));
     });
 
     return output.join(`\n`);
