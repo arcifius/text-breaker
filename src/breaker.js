@@ -81,6 +81,11 @@ function _processParagraph(paragraph, maxCharPerLine, shouldJustify) {
  * @returns {String} resulting text
  */
 function breakLines(text, maxCharPerLine, shouldJustify = false) {
+    // Prepare the text to be justified, when necessary
+    if (shouldJustify) {
+        text = text.replace(/ +/g, ` `);
+    }
+
     const output = [];
     const paragraphs = text.split(`\n`);
 
