@@ -23,14 +23,15 @@ Then, inside node console
 const textbreaker = require("./index");
 ```
 
-`textbreaker` accepts two params:
+`textbreaker` accepts three params:
 
 -   `String` text.
 -   `Number` maximum allowed characters per line.
+-   `Boolean` determines if the result should be justified.
 
-Respecting the limiter you provide, it returns a breaked text.
+Respecting the limiter you provide, it returns a breaked text that could be justified if you want to.
 
-> The number indicating maximum allowed chars per line isn't mandatory, the default value is 40.
+> The boolean indicating text justification needs isn't mandatory, the default value is false.
 
 Now you can make any test you want to (:
 
@@ -49,6 +50,8 @@ $ npm test
 -   `/src/`
     -   breaker.js
         -   Implementation of text breaker.
+    -   justify.js
+        -   Implementation of text justification.
     -   exceptions.js
         -   Implementation of possible exceptions that can occur while running the text breaker function.
 -   `/tests/`
