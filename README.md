@@ -1,7 +1,7 @@
 # text-breaker
 
 Breaks text into X characters per line.
-This project wasn't meant to be a npm package.
+This project isn't registered into NPM registry.
 
 ## Usage
 
@@ -37,13 +37,17 @@ Now you can make any test you want to (:
 
 ## Tests
 
+> Before testing and linting be sure to run `npm install`. It will install the necessary testing/linting libraries (:
+
 You can test it through the terminal but a lot of cases are already covered! Inside project's folder, just type
 
 ```bash
 $ npm test
 ```
 
-> Before testing, run `npm install`. It will install the necessary testing libraries (:
+## Linting
+
+You can lint the project with `npm run lint` and `npm run lint-fix` will fix most common mistakes while highlighting the ones that couldn't be fixed.
 
 ## Structure
 
